@@ -16,8 +16,12 @@
 
 package hello;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -32,7 +36,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 @Configuration
 public class OAuth2ServerConfiguration {
@@ -69,7 +73,7 @@ public class OAuth2ServerConfiguration {
 	protected static class AuthorizationServerConfiguration extends
 			AuthorizationServerConfigurerAdapter {
 
-		private TokenStore tokenStore = new InMemoryTokenStore();
+		
 
 		@Autowired
 		@Qualifier("authenticationManagerBean")
@@ -77,6 +81,9 @@ public class OAuth2ServerConfiguration {
 
 		@Autowired
 		private CustomUserDetailsService userDetailsService;
+		
+		private TokenStore tokenStore = new JdbcTokenStore(dataSource());
+		
 
 		@Override
 		public void configure(AuthorizationServerEndpointsConfigurer endpoints)
@@ -92,8 +99,7 @@ public class OAuth2ServerConfiguration {
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 			// @formatter:off
-			clients
-				.inMemory()
+			clients.jdbc(dataSource())
 					.withClient("clientapp")
 						.authorizedGrantTypes("password", "refresh_token")
 						.authorities("USER")
@@ -111,6 +117,19 @@ public class OAuth2ServerConfiguration {
 			tokenServices.setTokenStore(this.tokenStore);
 			return tokenServices;
 		}
+		
+//	    @ConfigurationProperties(prefix = "spring.datasource")
+//	    @Bean
+//	    @Primary
+	    public DataSource dataSource() {
+	        return DataSourceBuilder
+	                .create()
+	                .url("jdbc:mysql://localhost:3306/userbase")
+	                .username("root")
+	                .password("")
+	                .driverClassName("com.mysql.jdbc.Driver")
+	                .build();
+	    }
 
 	}
 
