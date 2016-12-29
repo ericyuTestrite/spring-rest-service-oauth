@@ -99,13 +99,15 @@ public class OAuth2ServerConfiguration {
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 			// @formatter:off
-			clients.jdbc(dataSource())
-					.withClient("clientapp")
-						.authorizedGrantTypes("password", "refresh_token")
-						.authorities("USER")
-						.scopes("read", "write")
-						.resourceIds(RESOURCE_ID)
-						.secret("123456");
+			clients.jdbc(dataSource());
+			
+			//only for first time creation
+//					.withClient("clientapp")
+//						.authorizedGrantTypes("password", "refresh_token")
+//						.authorities("USER")
+//						.scopes("read", "write")
+//						.resourceIds(RESOURCE_ID)
+//						.secret("123456");
 			// @formatter:on
 		}
 
