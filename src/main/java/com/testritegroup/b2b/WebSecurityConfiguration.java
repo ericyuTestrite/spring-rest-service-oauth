@@ -31,8 +31,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
 	
+	@Autowired
+    private CSISAuthenticationProvider authProvider;
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(authProvider);
 		 auth.userDetailsService(userDetailsService);
 	}
 
