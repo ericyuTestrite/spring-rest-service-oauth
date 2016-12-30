@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package hello;
+package com.testritegroup.b2b;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,6 +35,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import com.testritegroup.b2b.data.DataSourceManager;
 
 @Configuration
 public class OAuth2ServerConfiguration {
@@ -82,7 +82,7 @@ public class OAuth2ServerConfiguration {
 		@Autowired
 		private CustomUserDetailsService userDetailsService;
 		
-		private TokenStore tokenStore = new JdbcTokenStore(dataSource());
+		private TokenStore tokenStore = new JdbcTokenStore(DataSourceManager.dataSource());
 		
 
 		@Override
@@ -99,8 +99,7 @@ public class OAuth2ServerConfiguration {
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 			// @formatter:off
-			clients.jdbc(dataSource());
-			
+			clients.jdbc(DataSourceManager.dataSource());
 			//only for first time creation
 //					.withClient("clientapp")
 //						.authorizedGrantTypes("password", "refresh_token")
@@ -119,19 +118,6 @@ public class OAuth2ServerConfiguration {
 			tokenServices.setTokenStore(this.tokenStore);
 			return tokenServices;
 		}
-		
-//	    @ConfigurationProperties(prefix = "spring.datasource")
-//	    @Bean
-//	    @Primary
-	    public DataSource dataSource() {
-	        return DataSourceBuilder
-	                .create()
-	                .url("jdbc:mysql://localhost:3306/userbase")
-	                .username("root")
-	                .password("")
-	                .driverClassName("com.mysql.jdbc.Driver")
-	                .build();
-	    }
 
 	}
 

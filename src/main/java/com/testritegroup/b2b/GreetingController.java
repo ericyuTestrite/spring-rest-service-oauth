@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package hello;
+package com.testritegroup.b2b;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import hello.data.User;
+import com.testritegroup.b2b.data.User;
 
 @RestController
 public class GreetingController {
+	Logger logger = Logger.getLogger(GreetingController.class);
 
 	private static final String template = "Hello, %s!";
 
@@ -35,6 +37,12 @@ public class GreetingController {
 	public Greeting greeting(@AuthenticationPrincipal User user) {
 		return new Greeting(counter.incrementAndGet(),
 				String.format(template, user.getName()));
+	}
+	
+	@RequestMapping("/hi")
+	public String hi(@AuthenticationPrincipal User user) {
+		logger.info(user.getId() + " calling Hi..");
+		return "Hi "+ user.getLogin();
 	}
 
 }

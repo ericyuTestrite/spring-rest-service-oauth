@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hello.data;
+package com.testritegroup.b2b.data;
 
 import org.springframework.data.repository.CrudRepository;
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package hello;
+package com.testritegroup.b2b;
 
 import java.util.Collection;
 
-import hello.data.User;
-import hello.data.UserRepository;
+import com.testritegroup.b2b.data.User;
+import com.testritegroup.b2b.data.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package hello.data;
+package com.testritegroup.b2b.data;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class User {
+public class Role implements GrantedAuthority {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -44,28 +43,13 @@ public class User {
 	@NotEmpty
 	private String name;
 
-	@NotEmpty
-	@Column(unique = true, nullable = false)
-	private String login;
-
-	@NotEmpty
-	private String password;
-
 	@JsonIgnore
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "user_role", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = { @JoinColumn(name = "role_id") })
-	private Set<Role> roles = new HashSet<Role>();
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
+	private Set<User> users = new HashSet<User>();
 
-	public User() {
-	}
-
-	public User(User user) {
-		super();
-		this.id = user.getId();
-		this.name = user.getName();
-		this.login = user.getLogin();
-		this.password = user.getPassword();
-		this.roles = user.getRoles();
+	@Override
+	public String getAuthority() {
+		return name;
 	}
 
 	public Integer getId() {
@@ -84,28 +68,12 @@ public class User {
 		this.name = name;
 	}
 
-	public String getLogin() {
-		return login;
+	public Set<User> getUsers() {
+		return users;
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Set<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 }

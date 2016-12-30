@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hello;
+package com.testritegroup.b2b;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
