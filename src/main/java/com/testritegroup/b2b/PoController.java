@@ -3,6 +3,7 @@ package com.testritegroup.b2b;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +23,16 @@ public class PoController {
 		this.poMstRepository = poMstRepository;
 	}
 	
-	@RequestMapping(name="/getAllPo", method=RequestMethod.GET)
+	@RequestMapping(value="/getAllPo", method=RequestMethod.GET)
 	public Iterable<PoMst> getAllPo(@AuthenticationPrincipal User user) {
 		logger.info(user.getLogin() + " called /getAllPo!");
 		return poMstRepository.findAll();
+	}
+	
+	@RequestMapping(value="/getPo/{poNo}", method=RequestMethod.GET)
+	public PoMst getPoByPoNo(@AuthenticationPrincipal User user, @PathVariable String poNo) {
+		logger.info(user.getLogin() + " called /getPo "+ poNo);
+		return poMstRepository.findByPoNo(poNo);
 	}
 
 }
