@@ -16,75 +16,61 @@
 
 package com.testritegroup.b2b;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.testritegroup.b2b.data.User;
-import com.testritegroup.b2b.data.UserRepository;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.bnslink.base.bean.WorkingEnvironment;
+import com.bnslink.base.util.DigestUtil;
+import com.testritegroup.b2b.data.CSISRole;
+import com.testritegroup.b2b.data.CSISUserDetail;
+import com.testritegroup.b2b.data.UserRepository;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
 	private final UserRepository userRepository;
+	
+	private Logger logger = Logger.getLogger(CustomUserDetailsService.class);
 
 	@Autowired
 	public CustomUserDetailsService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-
+	
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.findByLogin(username);
-		if (user == null) {
-			throw new UsernameNotFoundException(String.format("User %s does not exist!", username));
-		}
-		return new UserRepositoryUserDetails(user);
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+			WorkingEnvironment we = new WorkingEnvironment();
+			CSISUserDetail userInfo = null;
+			try {
+				String currenttime = String.valueOf(System.currentTimeMillis());
+				String checkSum;
+				checkSum = DigestUtil.getChecksum(username, currenttime);
+				we.login2(username, currenttime, checkSum, "refreshTokenSession", "");
+				String appCD = "TLW";
+				userInfo = new CSISUserDetail();
+				userInfo.setUserDetail(we.getUserInfo());
+				userInfo.setMemberDetail(we.getMemberInfo());
+				userInfo.setFunctions(we.getFunctions(appCD));
+				we.getApplications();
+				userInfo.setBlockFunctions(we.getBlocks(appCD));
+				userInfo.setUserOrganization(we.getOrganizationInfo());
+				//a default role
+				List<CSISRole> userRoles = new ArrayList<CSISRole>();
+				CSISRole role = new CSISRole();
+				role.setRole("ROLE_USER");
+				userRoles.add(role);
+				userInfo.setUserRoles(userRoles);
+			} catch (Exception e) {
+				UsernameNotFoundException unfe = new UsernameNotFoundException(e.getMessage(),e);
+				throw unfe;
+			}
+			return userInfo;
 	}
-
-	private final static class UserRepositoryUserDetails extends User implements UserDetails {
-
-		private static final long serialVersionUID = 1L;
-
-		private UserRepositoryUserDetails(User user) {
-			super(user);
-		}
-
-		@Override
-		public Collection<? extends GrantedAuthority> getAuthorities() {
-			return getRoles();
-		}
-
-		@Override
-		public String getUsername() {
-			return getLogin();
-		}
-
-		@Override
-		public boolean isAccountNonExpired() {
-			return true;
-		}
-
-		@Override
-		public boolean isAccountNonLocked() {
-			return true;
-		}
-
-		@Override
-		public boolean isCredentialsNonExpired() {
-			return true;
-		}
-
-		@Override
-		public boolean isEnabled() {
-			return true;
-		}
-
-	}
-
 }

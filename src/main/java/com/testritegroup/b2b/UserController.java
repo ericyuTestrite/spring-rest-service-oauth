@@ -16,17 +16,25 @@
 
 package com.testritegroup.b2b;
 
-import com.testritegroup.b2b.data.User;
-import com.testritegroup.b2b.data.UserRepository;
+import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.bnslink.base.bean.WorkingEnvironment;
+import com.bnslink.base.dataobj.UserDetail;
+import com.testritegroup.b2b.data.User;
+import com.testritegroup.b2b.data.CSISUserDetail;
+import com.testritegroup.b2b.data.UserRepository;
 
 @RestController
 public class UserController {
 
 	private final UserRepository userRepository;
+	private Logger logger = Logger.getLogger(UserController.class);
 
 	@Autowired
 	public UserController(UserRepository userRepository) {
@@ -36,6 +44,36 @@ public class UserController {
 	@RequestMapping("/users")
 	public Iterable<User> getUsers() {
 		return userRepository.findAll();
+	}
+	
+	@RequestMapping("/loginBnsbase")
+	public CSISUserDetail loginBnsbase(HttpSession session){
+		WorkingEnvironment we = new WorkingEnvironment();
+		boolean isLogin = false;
+		CSISUserDetail userInfo = null;
+		try {
+			String sessionId = session.getId();
+			String result = we.login("3M", "1234", null, sessionId, null);
+			logger.info("Login result "+ result);
+			if(result.equals("30100200")){
+				isLogin = true;
+			}
+			if(isLogin){
+				String appCD = "TLW";
+				userInfo = new CSISUserDetail();
+				userInfo.setUserDetail(we.getUserInfo());
+				userInfo.setMemberDetail(we.getMemberInfo());
+				userInfo.setFunctions(we.getFunctions(appCD));
+				we.getApplications();
+				userInfo.setBlockFunctions(we.getBlocks(appCD));
+				userInfo.setUserOrganization(we.getOrganizationInfo());
+			}else{
+				throw new AccessDeniedException("403 returned");
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return userInfo;
 	}
 
 }

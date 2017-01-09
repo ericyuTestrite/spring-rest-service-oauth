@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+import com.bnslink.base.bean.WorkingEnvironment;
+
 @Component
 public class CSISAuthenticationProvider implements AuthenticationProvider {
 	Logger logger = Logger.getLogger(CSISAuthenticationProvider.class);
@@ -18,13 +20,23 @@ public class CSISAuthenticationProvider implements AuthenticationProvider {
       throws AuthenticationException {
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
-        logger.info(name +" is trying to login...everybody is ok");
-        if (true) {
-            // use the credentials and authenticate against the third-party system
-            return new UsernamePasswordAuthenticationToken(name, password, new ArrayList<>());
-        } else {
-            return null;
-        }
+        
+		try {
+			WorkingEnvironment we = new WorkingEnvironment();
+			String result = we .login(name, password, null, "getAccessTokenSession", null);
+			
+			if(result.equals("30100200")){
+				//login passed
+				logger.info("User "+ name+ " login successed (code: "+ result+")");
+				return new UsernamePasswordAuthenticationToken(name, password, new ArrayList<>());
+			}else{
+				return null;
+			}
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+		}
+		return null;
     }
  
     @Override

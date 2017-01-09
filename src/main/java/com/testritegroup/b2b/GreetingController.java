@@ -23,6 +23,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bnslink.base.dataobj.UserDetail;
+import com.testritegroup.b2b.data.CSISUserDetail;
 import com.testritegroup.b2b.data.User;
 
 @RestController
@@ -34,9 +36,14 @@ public class GreetingController {
 	private final AtomicLong counter = new AtomicLong();
 
 	@RequestMapping("/greeting")
-	public Greeting greeting(@AuthenticationPrincipal User user) {
+	public Greeting greeting(@AuthenticationPrincipal CSISUserDetail user) {
 		return new Greeting(counter.incrementAndGet(),
-				String.format(template, user.getName()));
+				String.format(template, user.getUserDetail().getAccount()));
+	}
+	
+	@RequestMapping("/aboutMe")
+	public UserDetail aboutMe(@AuthenticationPrincipal CSISUserDetail user) {
+		return user.getUserDetail();
 	}
 	
 	@RequestMapping("/hi")
