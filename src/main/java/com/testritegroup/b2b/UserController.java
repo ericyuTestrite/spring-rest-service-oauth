@@ -16,11 +16,14 @@
 
 package com.testritegroup.b2b;
 
+import java.security.Principal;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +38,10 @@ public class UserController {
 
 	private final UserRepository userRepository;
 	private Logger logger = Logger.getLogger(UserController.class);
+	
+	@Autowired
+	private CustomUserDetailsService userDetailsService;
+	
 
 	@Autowired
 	public UserController(UserRepository userRepository) {
@@ -44,6 +51,12 @@ public class UserController {
 	@RequestMapping("/users")
 	public Iterable<User> getUsers() {
 		return userRepository.findAll();
+	}
+	
+	@RequestMapping("/aboutMe")
+	public CSISUserDetail aboutMe(Principal user) {
+		CSISUserDetail userDetails = (CSISUserDetail)userDetailsService.loadUserByUsername(user.getName());
+		return userDetails;
 	}
 	
 	@RequestMapping("/loginBnsbase")
@@ -60,8 +73,7 @@ public class UserController {
 			}
 			if(isLogin){
 				String appCD = "TLW";
-				userInfo = new CSISUserDetail();
-				userInfo.setUserDetail(we.getUserInfo());
+				userInfo = new CSISUserDetail(we.getUserInfo());
 				userInfo.setMemberDetail(we.getMemberInfo());
 				userInfo.setFunctions(we.getFunctions(appCD));
 				we.getApplications();

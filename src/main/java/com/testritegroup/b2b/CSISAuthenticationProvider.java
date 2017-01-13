@@ -14,7 +14,7 @@ import com.bnslink.base.bean.WorkingEnvironment;
 @Component
 public class CSISAuthenticationProvider implements AuthenticationProvider {
 	Logger logger = Logger.getLogger(CSISAuthenticationProvider.class);
- 
+	
     @Override
     public Authentication authenticate(Authentication authentication) 
       throws AuthenticationException {
@@ -23,7 +23,7 @@ public class CSISAuthenticationProvider implements AuthenticationProvider {
         
 		try {
 			WorkingEnvironment we = new WorkingEnvironment();
-			String result = we .login(name, password, null, "getAccessTokenSession", null);
+			String result = we.login(name, password, null, "getAccessTokenSession", null);
 			
 			if(result.equals("30100200")){
 				//login passed

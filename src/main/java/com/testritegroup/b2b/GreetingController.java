@@ -16,13 +16,17 @@
 
 package com.testritegroup.b2b;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bnslink.base.dataobj.BlockDetail;
 import com.bnslink.base.dataobj.UserDetail;
 import com.testritegroup.b2b.data.CSISUserDetail;
 import com.testritegroup.b2b.data.User;
@@ -41,15 +45,10 @@ public class GreetingController {
 				String.format(template, user.getUserDetail().getAccount()));
 	}
 	
-	@RequestMapping("/aboutMe")
-	public UserDetail aboutMe(@AuthenticationPrincipal CSISUserDetail user) {
-		return user.getUserDetail();
-	}
-	
 	@RequestMapping("/hi")
-	public String hi(@AuthenticationPrincipal User user) {
-		logger.info(user.getId() + " calling Hi..");
-		return "Hi "+ user.getLogin();
+	public String hi(Principal user) {
+		logger.info(user.getName() + " calling Hi..");
+		return "Hi "+ user.getName();
 	}
 
 }

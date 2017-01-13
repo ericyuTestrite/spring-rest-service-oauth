@@ -35,6 +35,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.testritegroup.b2b.data.DataSourceManager;
 
@@ -59,7 +60,9 @@ public class OAuth2ServerConfiguration {
 		@Override
 		public void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
-			http
+			http.csrf()
+					.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+				.and()
 				.authorizeRequests()
 					.antMatchers("/users").hasRole("ADMIN")
 					.antMatchers("/greeting").authenticated();

@@ -14,6 +14,8 @@ import com.bnslink.base.dataobj.OrganizationDetail;
 import com.bnslink.base.dataobj.UserDetail;
 
 public class CSISUserDetail implements Serializable, UserDetails {
+	
+	
 
 	private static final long serialVersionUID = 1L;
 	private UserDetail userDetail;
@@ -22,6 +24,10 @@ public class CSISUserDetail implements Serializable, UserDetails {
 	private List<BlockDetail> blockFunctions;
 	private OrganizationDetail userOrganization;
 	private List<CSISRole> userRoles;
+	
+	public CSISUserDetail(UserDetail userDetail){
+		this.userDetail = userDetail;
+	}
 	
 	public OrganizationDetail getUserOrganization() {
 		return userOrganization;
@@ -60,13 +66,11 @@ public class CSISUserDetail implements Serializable, UserDetails {
 	}
 	@Override
 	public String getPassword() {
-		userDetail.getPassword();
-		return null;
+		return userDetail.getPassword();
 	}
 	@Override
 	public String getUsername() {
-		userDetail.getAccount();
-		return null;
+		return userDetail.getAccount();
 	}
 	@Override
 	public boolean isAccountNonExpired() {

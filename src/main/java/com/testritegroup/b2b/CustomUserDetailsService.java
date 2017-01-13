@@ -34,14 +34,11 @@ import com.testritegroup.b2b.data.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
-	private final UserRepository userRepository;
 	
 	private Logger logger = Logger.getLogger(CustomUserDetailsService.class);
 
 	@Autowired
-	public CustomUserDetailsService(UserRepository userRepository) {
-		this.userRepository = userRepository;
+	public CustomUserDetailsService() {
 	}
 	
 	@Override
@@ -53,9 +50,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 				String checkSum;
 				checkSum = DigestUtil.getChecksum(username, currenttime);
 				we.login2(username, currenttime, checkSum, "refreshTokenSession", "");
-				String appCD = "TLW";
-				userInfo = new CSISUserDetail();
-				userInfo.setUserDetail(we.getUserInfo());
+				String appCD = "B2B";
+
+				userInfo = new CSISUserDetail(we.getUserInfo());
 				userInfo.setMemberDetail(we.getMemberInfo());
 				userInfo.setFunctions(we.getFunctions(appCD));
 				we.getApplications();

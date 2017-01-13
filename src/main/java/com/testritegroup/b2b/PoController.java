@@ -1,5 +1,7 @@
 package com.testritegroup.b2b;
 
+import java.security.Principal;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,8 +32,8 @@ public class PoController {
 	}
 	
 	@RequestMapping(value="/getPo/{poNo}", method=RequestMethod.GET)
-	public PoMst getPoByPoNo(@AuthenticationPrincipal User user, @PathVariable String poNo) {
-		logger.info(user.getLogin() + " called /getPo "+ poNo);
+	public PoMst getPoByPoNo(Principal user, @PathVariable String poNo) {
+		logger.info(user.getName() + " called /getPo "+ poNo);
 		return poMstRepository.findByPoNo(poNo);
 	}
 

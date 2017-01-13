@@ -22,11 +22,11 @@ public class PoMst {
 	}
 
 	public String getCompanyId() {
-		return companyId;
+		return companyNo;
 	}
 
 	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
+		this.companyNo = companyId;
 	}
 
 	public String getPurchaseId() {
@@ -85,8 +85,8 @@ public class PoMst {
 		this.oldPoNo = oldPoNo;
 	}
 
-	@Column(name = "COMPANY_ID", nullable = false)
-	private String companyId;
+	@Column(name = "COMPANY_NO", nullable = false)
+	private String companyNo;
 	
 	@Column(name = "PURCHASE_ID", nullable = false)
 	private String purchaseId;

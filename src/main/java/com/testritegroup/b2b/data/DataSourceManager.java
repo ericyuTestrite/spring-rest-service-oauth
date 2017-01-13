@@ -18,14 +18,18 @@ import org.springframework.jndi.JndiObjectFactoryBean;
 public class DataSourceManager {
 	private static DataSource dataSource;
 	
+	/**
+	 * for tokenStore
+	 * @return
+	 */
 	public static DataSource dataSource(){
 		if(dataSource == null){
 			dataSource = DataSourceBuilder
 	                .create()
-	                .url("jdbc:mysql://localhost:3306/userbase")
-	                .username("root")
-	                .password("")
-	                .driverClassName("com.mysql.jdbc.Driver")
+	                .url("jdbc:oracle:thin:@192.168.5.20:1521/tsrm")
+	                .username("tcb")
+	                .password("tcbtest")
+	                .driverClassName("oracle.jdbc.driver.OracleDriver")
 	                .build();
 		}
 		return dataSource;
