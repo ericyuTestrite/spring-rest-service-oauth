@@ -1,4 +1,19 @@
-= Spring REST Service OAuth
+== 說明
+
+Login Process:
+
+1. 取得 AccessToken
+> ```sh
+> curl -X POST -vu clientapp:123456 http://localhost:8080/oauth/token -H "Accept: application/json" -d "password=__PASSWORD__&username=__USERNAME__&grant_type=password&scope=read%20write&client_secret=123456&client_id=clientapp"
+> ```
+
+2. 利用 AccessToken 取得個人資訊
+> ```sh
+> curl http://localhost:8080/aboutMe -H "Authorization: Bearer AAAAAAAAA-BBBB-4c7b-800b-cd8fde0f8347"
+> ```
+
+
+== Spring REST Service OAuth
 
 image::https://travis-ci.org/royclarkson/spring-rest-service-oauth.svg[Build Status, link=https://travis-ci.org/royclarkson/spring-rest-service-oauth/]
 
